@@ -192,7 +192,7 @@ describe('PostsView', () => {
           .toHaveLength(topicThreadCount);
         // When grouping is enabled, topic 1 will be shown, but not otherwise.
         expect(screen.queryAllByText(/this is thread-\d+ in topic test-topic-1/i))
-          .toHaveLength(grouping ? topicThreadCount : 2);
+          .toHaveLength(grouping ? topicThreadCount : 0);
       },
     );
   });

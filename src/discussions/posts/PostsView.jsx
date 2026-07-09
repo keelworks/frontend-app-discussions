@@ -33,7 +33,7 @@ const CategoryPostsList = React.memo(({ category }) => {
   const groupedCategory = useSelector(selectCurrentCategoryGrouping)(category);
   // If grouping at subsection is enabled, only apply it when browsing discussions in context in the learning MFE.
   const topicIds = useSelector(selectTopicsUnderCategory)(enableInContextSidebar ? groupedCategory : category);
-  const postsIds = useSelector(enableInContextSidebar ? selectAllThreadsIds : selectTopicThreadsIds(topicIds));
+  const postsIds = useSelector(enableInContextSidebar ? selectTopicThreadsIds(topicIds) : selectAllThreadsIds);
 
   return <PostsList postsIds={postsIds} topicsIds={topicIds} />;
 });
