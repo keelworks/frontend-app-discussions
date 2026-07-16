@@ -169,8 +169,8 @@ describe('PostsView', () => {
     });
 
     test.each([true, false])(
-      'displays a list of posts in a category with grouping at subsection = %s',
-      async (grouping) => {
+      'displays only the current unit\'s posts in the in-context sidebar regardless of group_at_subsection = %s',
+      async (groupAtSubsection) => {
         setupStore({
           blocks: {
             blocks: {
@@ -182,19 +182,19 @@ describe('PostsView', () => {
               'test-seq-key': { type: 'sequential', topics: ['test-topic-0', 'test-topic-1', 'test-topic-2'] },
             },
           },
-          config: { groupAtSubsection: grouping, hasModerationPrivileges: true, provider: 'openedx' },
+          config: { groupAtSubsection, hasModerationPrivileges: true, provider: 'openedx' },
         });
         await act(async () => {
-          await renderComponent({ category: 'test-usage-key', enableInContextSidebar: true, p: true });
+          await renderComponent({ category: 'test-usage-key', enableInContextSidebar: true });
         });
         const topicThreadCount = Math.ceil(threadCount / 3);
         expect(screen.queryAllByText(/this is thread-\d+ in topic test-topic-2/i))
           .toHaveLength(topicThreadCount);
         expect(screen.queryAllByText(/this is thread-\d+ in topic test-topic-0/i))
           .toHaveLength(topicThreadCount);
-        // When grouping is enabled, topic 1 will be shown, but not otherwise.
+        // Sibling units under the same subsection must never leak into the sidebar.
         expect(screen.queryAllByText(/this is thread-\d+ in topic test-topic-1/i))
-          .toHaveLength(grouping ? topicThreadCount : 0);
+          .toHaveLength(0);
       },
     );
   });
