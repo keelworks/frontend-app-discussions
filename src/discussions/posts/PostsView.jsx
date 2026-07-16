@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
 import SearchInfo from '../../components/SearchInfo';
-import { selectCurrentCategoryGrouping, selectTopicsUnderCategory } from '../../data/selectors';
+import { selectTopicsUnderCategory } from '../../data/selectors';
 import DiscussionContext from '../common/context';
 import { handleKeyDown } from '../utils';
 import { selectAllThreadsIds, selectTopicThreadsIds } from './data/selectors';
@@ -30,9 +30,9 @@ TopicPostsList.propTypes = {
 
 const CategoryPostsList = React.memo(({ category }) => {
   const { enableInContextSidebar } = useContext(DiscussionContext);
-  const groupedCategory = useSelector(selectCurrentCategoryGrouping)(category);
-  // If grouping at subsection is enabled, only apply it when browsing discussions in context in the learning MFE.
-  const topicIds = useSelector(selectTopicsUnderCategory)(enableInContextSidebar ? groupedCategory : category);
+  // The in-context sidebar always scopes to the current unit's own topics, never rolling up to the
+  // parent subsection, so posts from sibling units in the same subsection don't leak into this view.
+  const topicIds = useSelector(selectTopicsUnderCategory)(category);
   const postsIds = useSelector(enableInContextSidebar ? selectTopicThreadsIds(topicIds) : selectAllThreadsIds);
 
   return <PostsList postsIds={postsIds} topicsIds={topicIds} />;
